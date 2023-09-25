@@ -1,29 +1,29 @@
 pipeline {
     agent any
-   environment {
+       environment {
         PATH = "/opt/maven/bin:$PATH"
     }
     stages {
         stage('GitCloning') {
             steps {
-                git branch: 'main', credentialsId: 'git_credentials', url: 'https://github.com/shashikanth-t/webrepo.git'
+                git branch: 'main', credentialsId: 'git_credential', url: 'https://github.com/vijayrampure/webrepo.git'
                 echo 'Code Checkout done sucessfully.'
             }
 			}
-            stage('CodeBuild ') {
+            stage('CodeBuild') {
             steps {
-            sh 'mvn clean install'
-            echo 'Code build done sucessfully.'
+                    sh 'mvn clean package'
+                    echo 'Code build done sucessfully.'
             }
             }
             stage('CodeDeploy') {
             steps {
            sshagent(['deploy_user']) {
                
-               sh "scp -o StrictHostKeyChecking=no webapp/target/webapp.war  ec2-user@34.207.89.215:/opt/apache-tomcat-9.0.80/webapps"
+               sh "scp -o StrictHostKeyChecking=no /var/lib/jenkins/workspace/pjob-2/webapp/target/webapp.war  ec2-user@3.15.146.181:/opt/apache-tomcat-9.0.80/webapps"
     
                             }         
             }
-            }                 
+            }            
         }
     }
